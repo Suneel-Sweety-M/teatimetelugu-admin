@@ -1,87 +1,125 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { deleteGallery, getFilteredGallery } from "../../helper/apis";
+import { deleteGallery, getFilteredGallery } from "../../helper/apis"; // new API function
+import Popup from "../confirmation-popup/Popup";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const Galleries = () => {
   const { user, lang } = useSelector((state) => state.teatimetelugu_admin);
-  const navigate = useNavigate();
-
-  const [allGallery, setAllGallery] = useState([]);
-  const [time, setTime] = useState("");
   const [category, setCategory] = useState("");
+  const [time, setTime] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
-  const [deletePopup, setDeletePopup] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(totalItems / itemsPerPage)) {
-      setCurrentPage(currentPage + 1);
+  const [cache, setCache] = useState({});
+  const [currentGallery, setCurrentGallery] = useState([]);
+  const [allGallery, setAllGallery] = useState([]); // keep all fetched
+  const [isLoading, setIsLoading] = useState(false);
+  const [deletePopup, setDeletePopup] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+
+  const navigate = useNavigate();
+
+  // 🔑 build cache key based on filters
+  const buildKey = useCallback(() => {
+    return `${category}|${time}|${searchText}|${itemsPerPage}`;
+  }, [category, time, searchText, itemsPerPage]);
+
+  // fetch gallery
+  const fetchGallery = async (page = 1, replace = false) => {
+    const key = buildKey();
+
+    if (cache[key] && cache[key][page] && !replace) {
+      setCurrentGallery(cache[key][page]);
+      setAllGallery(Object.values(cache[key]).flat());
+      return;
     }
-  };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(parseInt(event.target.value));
-    setCurrentPage(1);
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentGallery = allGallery?.slice(indexOfFirstItem, indexOfLastItem);
-
-  const filteredGallery = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await getFilteredGallery(
         category,
         time,
         searchText,
-        currentPage,
+        page,
         itemsPerPage
       );
 
-      if (res?.status === "success") {
-        setAllGallery(res?.gallery);
-        setTotalItems(res?.pagination?.totalItems || 0);
-      } else {
-        toast.error(res?.message);
+      if (res) {
+        const { gallery, pagination } = res;
+        setTotalItems(pagination.totalItems);
+
+        // cache the response
+        setCache((prev) => ({
+          ...prev,
+          [key]: {
+            ...(prev[key] || {}),
+            [page]: gallery,
+          },
+        }));
+
+        setCurrentGallery(gallery);
+        setAllGallery((prev) =>
+          replace
+            ? gallery
+            : [
+                ...prev.filter((g) => !gallery.some((x) => x._id === g._id)),
+                ...gallery,
+              ]
+        );
       }
+    } catch (err) {
+      console.error("Error fetching gallery:", err);
+    } finally {
       setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
     }
-  }, [time, category, searchText, currentPage, itemsPerPage]);
+  };
+
+  // fetch on filters or itemsPerPage change
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchGallery(1, true);
+  }, [category, time, searchText, itemsPerPage]);
+
+  // handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      fetchGallery(newPage);
+    }
+  };
+
+  const handleNextPage = () => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (currentPage < totalPages) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      fetchGallery(newPage);
+    }
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value));
+    setCurrentPage(1);
+  };
 
   const handleLink = (id) => {
     navigate(`/${user?._id}/dashboard/edit-gallery/${id}`);
   };
 
-  const handleView = (item) => {
-    navigate(`/gallery/${item?.newsId}`);
+  const handleView = (news) => {
+    navigate(`/${news?.category}/${news?._id}`);
   };
 
   const handleDeletePopup = async (id) => {
     setDeleteId(id);
     setDeletePopup(true);
-  };
-
-  const handleDeleteCancel = async () => {
-    setDeleteId("");
-    setDeletePopup(false);
   };
 
   const handleDelete = async () => {
@@ -92,7 +130,7 @@ const Galleries = () => {
         toast.success(res?.message);
         setDeleteId("");
         setDeletePopup(false);
-        filteredGallery();
+        fetchGallery();
       } else {
         toast.error(res?.message);
       }
@@ -103,10 +141,7 @@ const Galleries = () => {
     }
   };
 
-  useEffect(() => {
-    filteredGallery();
-  }, [filteredGallery]);
-
+  // UI (yours, unchanged)
   return (
     <>
       <div className="das-all-gallery-container das-m20 p20 box-shadow">
@@ -127,8 +162,6 @@ const Galleries = () => {
                 <div className="nfc-search">
                   <input
                     type="input"
-                    name=""
-                    id=""
                     placeholder="Search here..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
@@ -169,12 +202,12 @@ const Galleries = () => {
               <div className="">
                 {allGallery?.length > 0 ? (
                   <div className="das-all-galleries">
-                    {allGallery?.map((item, index) => (
+                    {currentGallery?.map((item, index) => (
                       <div className="das-gallery-card" key={index}>
                         <div className="gallery-card">
                           <img
                             src={
-                              item?.galleryPics[0] ||
+                              item?.galleryPics?.[0] ||
                               "https://res.cloudinary.com/demmiusik/image/upload/v1729620719/EET_cyxysf.png"
                             }
                             alt=""
@@ -254,40 +287,12 @@ const Galleries = () => {
       </div>
 
       {deletePopup && (
-        <div className="popup-news-container popup-container">
-          <div className="br5 popup-img p10">
-            <div className="das-news-container">
-              <div className="popup-news-top das-d-flex das-jcsb">
-                <div className="das-news-container-title">
-                  Are you sure want to delete ?
-                </div>
-                <span className="popup-news-top-x das-mx20">
-                  <i
-                    className="fa fa-xmark"
-                    onClick={() => setDeletePopup(false)}
-                  ></i>
-                </span>
-              </div>
-              <div className="das-all-news-bottom das-mt20">
-                <div className="news-popup-btns das-mx10">
-                  <button className="btn" onClick={handleDeleteCancel}>
-                    Cancel
-                  </button>
-                </div>
-
-                <div className="news-popup-btns">
-                  {!isUploading ? (
-                    <button className="btn save-btn" onClick={handleDelete}>
-                      Delete
-                    </button>
-                  ) : (
-                    <button className="btn is-sending-btn">Deleting...</button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Popup
+          setDeletePopup={setDeletePopup}
+          deleteId={deleteId}
+          handleDelete={handleDelete}
+          isUploading={isUploading}
+        />
       )}
     </>
   );

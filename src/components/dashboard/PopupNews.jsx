@@ -1,35 +1,35 @@
 import React, { useEffect, useState, useCallback } from "react";
 import moment from "moment";
-import {
-  deleteNewsPost,
-  getAdminsWriters,
-  getFilteredNews,
-} from "../../helper/apis"; // your API wrapper
-import Popup from "../confirmation-popup/Popup";
+import { getAdminsWriters, getFilteredNews } from "../../helper/apis";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const NewsTable = () => {
+const PopupNews = ({
+  setPopupNews,
+  selected,
+  setSelected,
+  handleSave,
+  isUploading,
+  maxLimit,
+}) => {
   const { user, lang } = useSelector((state) => state.teatimetelugu_admin);
+
+  // Filter states
   const [category, setCategory] = useState("");
   const [time, setTime] = useState("");
   const [searchText, setSearchText] = useState("");
   const [writer, setWriter] = useState("");
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
+  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
+  // Data states
   const [cache, setCache] = useState({}); // { "category|time|search|writer|limit": {1: [..], 2:[..]} }
   const [currentNews, setCurrentNews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [deletePopup, setDeletePopup] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
   const [allWriters, setAllWriters] = useState([]);
-
-  const navigate = useNavigate();
 
   // 🔑 build cache key based on filters
   const buildKey = useCallback(() => {
@@ -43,6 +43,7 @@ const NewsTable = () => {
     // check cache first
     if (cache[key] && cache[key][page] && !replace) {
       setCurrentNews(cache[key][page]);
+      setTotalItems(cache[key].totalItems || 0);
       return;
     }
 
@@ -68,6 +69,7 @@ const NewsTable = () => {
           [key]: {
             ...(prev[key] || {}),
             [page]: news,
+            totalItems: pagination.totalItems,
           },
         }));
 
@@ -75,6 +77,7 @@ const NewsTable = () => {
       }
     } catch (err) {
       console.error("Error fetching news:", err);
+      toast.error("Failed to fetch news");
     } finally {
       setIsLoading(false);
     }
@@ -124,47 +127,49 @@ const NewsTable = () => {
     setCurrentPage(1);
   };
 
-  const handleLink = (id) => {
-    navigate(`/${user?._id}/dashboard/edit-news/${id}`);
-  };
+  const handleCheckboxChange = (id) => {
+    const exists = selected.find((s) => s.id === id);
 
-  const handleView = (news) => {
-    navigate(`/${news?.category}/${news?._id}`);
-  };
-
-  const handleDeletePopup = async (id) => {
-    setDeleteId(id);
-    setDeletePopup(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      setIsUploading(true);
-      const res = await deleteNewsPost(deleteId);
-      if (res?.status === "success") {
-        toast.success(res?.message);
-        setDeleteId("");
-        setDeletePopup(false);
-        fetchNews();
-      } else {
-        toast.error(res?.message);
+    if (exists) {
+      setSelected((prev) => prev.filter((s) => s.id !== id));
+    } else {
+      if (selected.length === maxLimit) {
+        toast.info(`You have reached max limit of ${maxLimit} posts.`);
+        return;
       }
-      setIsUploading(false);
-    } catch (error) {
-      setIsUploading(false);
-      console.log(error);
+      setSelected((prev) => [...prev, { id, position: null }]);
     }
+  };
+
+  const handlePositionChange = (id, position) => {
+    if (selected.some((s) => s.position === position && s.id !== id)) {
+      toast.error("Position already selected for another post.");
+      return;
+    }
+
+    setSelected((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, position } : s))
+    );
   };
 
   // index for SN column
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
 
-  // UI (your provided return code)
   return (
-    <>
-      <div className="das-mt20">
+    <div className="popup-news-container popup-container">
+      <div className="br5 popup-img p10">
         <div className="das-news-container">
-          <div className="das-news-container-title">All News</div>
+          <div className="popup-news-top das-d-flex das-jcsb">
+            <div className="das-news-container-title">Select News</div>
+            <span className="popup-news-top-x das-mx20">
+              <i
+                className="fa fa-xmark cp"
+                onClick={() => setPopupNews(false)}
+              ></i>
+            </span>
+          </div>
+
+          {/* Filter Section */}
           <div className="das-news-filter-container">
             <div className="nfc-left das-d-flex">
               <select
@@ -178,7 +183,6 @@ const NewsTable = () => {
                 <option value="movies">Movies</option>
                 <option value="gossips">Gossips</option>
                 <option value="show">Show</option>
-                {/* <option value="collections">Collections</option> */}
                 <option value="reviews">Reviews</option>
                 <option value="ott">OTT</option>
                 <option value="sports">Sports</option>
@@ -186,8 +190,6 @@ const NewsTable = () => {
               <div className="nfc-search">
                 <input
                   type="input"
-                  name=""
-                  id=""
                   placeholder="Search here..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
@@ -211,13 +213,13 @@ const NewsTable = () => {
                   ))}
                 </select>
               </div>
-              <div className="nfc-filters">
+              <div className="nfc-filters mr10">
                 <select
                   className="nfc-filter"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                 >
-                  <option value="">Selecte Time</option>
+                  <option value="">Select Time</option>
                   <option value="1day">Last 24h</option>
                   <option value="1week">Last week</option>
                   <option value="1month">Last 1 month</option>
@@ -231,20 +233,29 @@ const NewsTable = () => {
           <table className="das-all-news-section">
             <thead>
               <tr>
-                <th className="table-sn">Index</th>
+                <th className="table-checkbox">Check</th>
+                <th className="table-sn">S.No.</th>
                 <th className="table-title">Title</th>
                 <th className="table-image">Image</th>
                 <th className="table-category">Category</th>
                 <th className="table-date">Date</th>
                 <th className="table-status">Writer</th>
-                <th className="table-action">Action</th>
+                <th>Position</th>
               </tr>
             </thead>
+
             {!isLoading ? (
               <tbody>
                 {currentNews?.length > 0 ? (
                   currentNews?.map((item, index) => (
                     <tr key={index}>
+                      <td className="table-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selected.some((s) => s.id === item?._id)}
+                          onChange={() => handleCheckboxChange(item?._id)}
+                        />
+                      </td>
                       <td className="table-sn">
                         {indexOfFirstItem + index + 1}
                       </td>
@@ -265,75 +276,102 @@ const NewsTable = () => {
                       <td className="table-status">
                         <span>{item?.postedBy?.fullName}</span>
                       </td>
-                      <td className="table-action">
-                        <i
-                          className="fa fa-eye cp color-green"
-                          onClick={() => handleView(item)}
-                        ></i>
-                        <i
-                          className="fa fa-pen-to-square cp"
-                          onClick={() => handleLink(item?._id)}
-                        ></i>
-                        <i
-                          className="fa fa-trash cp"
-                          onClick={() => handleDeletePopup(item?._id)}
-                        ></i>
+                      <td>
+                        <select
+                          className="ml10"
+                          disabled={!selected.some((s) => s.id === item._id)}
+                          value={
+                            selected.find((s) => s.id === item._id)?.position ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            handlePositionChange(
+                              item._id,
+                              parseInt(e.target.value)
+                            )
+                          }
+                        >
+                          <option value="">Pos</option>
+                          {Array.from(
+                            { length: maxLimit },
+                            (_, i) => i + 1
+                          ).map((pos) => (
+                            <option key={pos} value={pos}>
+                              {pos}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                     </tr>
                   ))
                 ) : (
-                  <p>No posts available</p>
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No posts available
+                    </td>
+                  </tr>
                 )}
               </tbody>
             ) : (
-              <h3 className="text-center">Loading...</h3>
+              <tbody>
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    <h3>Loading...</h3>
+                  </td>
+                </tr>
+              </tbody>
             )}
           </table>
 
-          {!isLoading && (
-            <div className="das-all-news-pagenation">
-              <div className="dan-pagenation-sec">
-                <span>News per page: </span>
-                <select
-                  value={itemsPerPage}
-                  onChange={handleItemsPerPageChange}
-                  className="cp"
-                >
-                  {/* <option value="5">5</option> */}
-                  <option value="10">10</option>
-                  <option value="15">15</option>
-                  <option value="20">20</option>
-                </select>
-                <div className="page-now">
-                  {currentPage} / {Math.ceil(totalItems / itemsPerPage)} of{" "}
-                  {totalItems} items
-                </div>
-                <div className="page-arrows">
-                  <i
-                    className="fa fa-angle-left cp"
-                    onClick={handlePreviousPage}
-                  ></i>
-                  <i
-                    className="fa fa-angle-right cp"
-                    onClick={handleNextPage}
-                  ></i>
-                </div>
+          <div className="das-all-news-bottom">
+            <div className="news-popup-btns das-mx10">
+              {!isUploading ? (
+                <button className="btn save-btn" onClick={handleSave}>
+                  Save
+                </button>
+              ) : (
+                <button className="btn is-sending-btn">Saving...</button>
+              )}
+            </div>
+
+            <div className="dan-pagenation-sec">
+              <span>News per page: </span>
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className="cp"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+              </select>
+              <div className="page-now">
+                {currentPage} / {Math.ceil(totalItems / itemsPerPage)} of{" "}
+                {totalItems} items
+              </div>
+              <div className="page-arrows">
+                <i
+                  className={`fa fa-angle-left cp ${
+                    currentPage === 1 ? "disabled" : ""
+                  }`}
+                  onClick={handlePreviousPage}
+                ></i>
+                <i
+                  className={`fa fa-angle-right cp ${
+                    currentPage === Math.ceil(totalItems / itemsPerPage)
+                      ? "disabled"
+                      : ""
+                  }`}
+                  onClick={handleNextPage}
+                ></i>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
-
-      {deletePopup && (
-        <Popup
-          setDeletePopup={setDeletePopup}
-          deleteId={deleteId}
-          handleDelete={handleDelete}
-          isUploading={isUploading}
-        />
-      )}
-    </>
+    </div>
   );
 };
 
-export default NewsTable;
+export default PopupNews;

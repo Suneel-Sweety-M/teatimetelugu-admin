@@ -123,7 +123,7 @@ const WriteGallery = () => {
 
             {/* Title */}
             <div className="wns-box das-my20 das-py20">
-              <h3>Add Title</h3>
+              <h3>Add English Title</h3>
               <input
                 type="text"
                 placeholder="eg. Elon started... (EN)"
@@ -228,8 +228,8 @@ const WriteGallery = () => {
                   onChange={(e) => setCategory({ ...category, te: e.target.value })}
                 >
                   <option value="">Select Here</option>
-                  <option value="hero">Hero</option>
-                  <option value="actress">Actress</option>
+                  <option value="హీరో">హీరో</option>
+                  <option value="నటి">నటి</option>
                 </select>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: null,
   reactions: [], // Will store array of { userId, type, _id }
-  lang: "te",
+  lang: "en",
 };
 
 const userSlice = createSlice({
@@ -12,6 +12,7 @@ const userSlice = createSlice({
   reducers: {
     login(state, action) {
       state.user = action.payload.user;
+      state.lang = action.payload.user.lang;
     },
     logout(state) {
       state.user = null;

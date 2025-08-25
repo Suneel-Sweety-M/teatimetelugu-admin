@@ -305,7 +305,7 @@ const GalleryEdit = () => {
               <div className="cancel-news-btn btn">Cancel</div>
               {!isSaving ? (
                 <div className="post-news-btn btn" onClick={handlePost}>
-                  Post
+                  Update
                 </div>
               ) : (
                 <button type="submit" className="is-submitting-btn btn">

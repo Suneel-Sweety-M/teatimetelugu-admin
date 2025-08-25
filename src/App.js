@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import AllNews from "./pages/AllNews";
 import AddNews from "./pages/AddNews";
@@ -15,8 +15,8 @@ import CollectionsReleases from "./pages/CollectionsReleases";
 import AdsPosters from "./pages/AdsPosters";
 import Profile from "./pages/Profile";
 import UpdateUserProfile from "./pages/UpdateUserProfile";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { login } from "./redux/userSlice";
 import { ToastContainer } from "react-toastify";
 import { getLoggedinUser } from "./helper/apis";
@@ -24,8 +24,10 @@ import Login from "./pages/Login";
 import "./components/dashboard/dashboard.css";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const location = useLocation();
+  const { user } = useSelector((state) => state.teatimetelugu_admin);
 
   useEffect(() => {
     async function fetchUser() {
@@ -36,6 +38,8 @@ function App() {
         }
       } catch (error) {
         console.error("Error fetching user:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchUser();
@@ -45,39 +49,99 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div className="app-loading">
+        <img
+          src="/assets/new-ttt-logo.jpg"
+          alt="logo"
+          className="loading-logo"
+        />
+        <p className="loading-text">Loading......</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/:uid/dashboard" element={<Dashboard />} />
-        <Route path="/:uid/dashboard/news" element={<AllNews />} />
-        <Route path="/:uid/dashboard/add-news" element={<AddNews />} />
+        {/* Redirect to dashboard if user is logged in and tries to access login page */}
         <Route
-          path="/:uid/dashboard/edit-news/:newsId"
-          element={<EditNews />}
-        />
-        <Route path="/:uid/dashboard/add-gallery" element={<AddGallery />} />
-        <Route path="/:uid/dashboard/all-gallery" element={<AllGallery />} />
-        <Route path="/:uid/dashboard/all-videos" element={<AllVideos />} />
-        <Route
-          path="/:uid/dashboard/edit-gallery/:gid"
-          element={<EditGallery />}
-        />
-        <Route path="/:uid/dashboard/add-account" element={<AddWriter />} />
-        <Route
-          path="/:uid/dashboard/collections-releases"
-          element={<CollectionsReleases />}
-        />
-        <Route path="/:uid/dashboard/posters-ads" element={<AdsPosters />} />
-        <Route path="/:uid/dashboard/writers" element={<AllWriters />} />
-        <Route path="/:uid/dashboard/profile" element={<Profile />} />
-        <Route
-          path="/:uid/dashboard/update-profile/:userId"
-          element={<UpdateUserProfile />}
+          path="/"
+          element={
+            user ? (
+              <Navigate to={`/${user._id}/dashboard`} replace />
+            ) : (
+              <Login />
+            )
+          }
         />
 
-        <Route path="*" element={<PageNotFound />} />
+        {/* Protected Routes - Redirect to login if not authenticated */}
+        <Route
+          path="/:uid/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/news"
+          element={user ? <AllNews /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/add-news"
+          element={user ? <AddNews /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/edit-news/:newsId"
+          element={user ? <EditNews /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/add-gallery"
+          element={user ? <AddGallery /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/all-gallery"
+          element={user ? <AllGallery /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/all-videos"
+          element={user ? <AllVideos /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/edit-gallery/:gid"
+          element={user ? <EditGallery /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/add-account"
+          element={user ? <AddWriter /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/collections-releases"
+          element={user ? <CollectionsReleases /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/posters-ads"
+          element={user ? <AdsPosters /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/writers"
+          element={user ? <AllWriters /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/profile"
+          element={user ? <Profile /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/:uid/dashboard/update-profile/:userId"
+          element={user ? <UpdateUserProfile /> : <Navigate to="/" replace />}
+        />
+
+        {/* Catch all route - redirect based on auth status */}
+        <Route
+          path="*"
+          element={user ? <PageNotFound /> : <Navigate to="/" replace />}
+        />
       </Routes>
     </>
   );

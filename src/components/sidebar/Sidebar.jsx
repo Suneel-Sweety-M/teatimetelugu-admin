@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../helper/apis";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 const Sidebar = ({ setBars }) => {
   const { user } = useSelector((state) => state.teatimetelugu_admin);
   const location = useLocation();
-  //   const { uid } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [logoutPopup, setLogoutPopup] = useState(false);
@@ -29,34 +28,14 @@ const Sidebar = ({ setBars }) => {
     }
   }, [dispatch, navigate]);
 
-  //   useEffect(() => {
-  //     if (!user || !uid) return;
-
-  //     // validate uid length
-  //     if (uid.length !== 24) {
-  //       navigate("/");
-  //       return;
-  //     }
-
-  //     // check if uid matches user._id
-  //     if (String(uid) !== String(user._id)) {
-  //       navigate("/");
-  //       return;
-  //     }
-
-  //     // check role
-  //     if (!(user.role === "writer" || user.role === "admin")) {
-  //       navigate("/");
-  //       return;
-  //     }
-  //   }, [navigate, uid, user]);
-
-  document.title = "Dashboard | Tea Time Telugu";
+  useEffect(() => {
+    document.title = "Dashboard | Tea Time Telugu";
+  }, []);
 
   return (
     <>
       <div className="das-sidebar">
-        <Link to="/" className="sidebar-logo">
+        <Link to={basePath} className="sidebar-logo">
           <img src="/assets/new-ttt-logo.jpg" alt="logo" />
         </Link>
         <div className="sidebar-tabs">

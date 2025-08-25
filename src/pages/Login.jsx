@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../components/login/login.css";
 import { toast } from "react-toastify";
 import { login } from "../redux/userSlice";
@@ -13,6 +13,7 @@ const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors = {};
@@ -63,6 +64,7 @@ const Login = () => {
           email: "",
           password: "",
         });
+        navigate(`${res?.user?._id}/dashboard`);
       } else {
         toast.info(res?.message || "Info");
       }

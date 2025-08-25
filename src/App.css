@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Mallanna&family=Ramabhadra&display=swap");
+
 * {
-  margin: 0;
+  margin: 0; 
   padding: 0;
   box-sizing: border-box;
 }
@@ -9,7 +11,9 @@ html {
 }
 
 body {
-  font-family: "Rubik", sans-serif;
+  font-family: "Mallanna", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   background-color: #f7f7f7;
   background-image: url(https://demo.tagdiv.com/newspaper_magazine_pro/wp-content/uploads/2020/06/what-the-hex.png.webp);
   background-attachment: fixed;
@@ -790,5 +794,245 @@ textarea {
 @media screen and (max-width: 400px) {
   .forgot-password-page .forgot-password-form {
     width: 100%;
+  }
+}
+
+/*==============================================*/
+
+.gallery-card img {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.gallery-card img,
+.gallery-image-container {
+  height: 100%;
+  width: 100%;
+}
+
+
+/* ======== Movie Schedules ======= */
+.movie-schedules-container {
+  margin: 20px 0;
+}
+
+.current-schedules {
+  display: flex;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.current-schedules span {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.schedules-list-item {
+  display: flex;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.schedules-list-item span {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* ====== Grid View Styles ====== */
+.grid-view-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.movie-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.movie-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.movie-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+}
+
+.movie-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.movie-card:hover .movie-image {
+  transform: scale(1.05);
+}
+
+.movie-content {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-meta {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.movie-title {
+  font-size: 1.1rem;
+  line-height: 1.3;
+  /* margin: 0 0 0.75rem; */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.movie-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-card:hover .movie-title {
+  color: #d32f2f;
+}
+
+/* ====== Responsive Adjustments ====== */
+@media (max-width: 1024px) {
+  .grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .movie-content {
+    padding: 1rem;
+  }
+
+  .movie-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-view {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-image-container {
+    padding-top: 75%; /* 4:3 aspect ratio for mobile */
+  }
+}
+
+/* Accessibility Improvements */
+.movie-link:focus {
+  outline: 2px solid #ff5e62;
+  outline-offset: 2px;
+}
+
+/* ======== APP LOADING ======== */
+.app-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fff;
+  padding: 20px;
+}
+
+.loading-logo {
+  height: 150px;
+  margin-bottom: clamp(20px, 5vw, 40px);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: clamp(40px, 10vw, 60px);
+  height: clamp(40px, 10vw, 60px);
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #fff;
+  animation: spin 1s linear infinite;
+  margin: 0 auto clamp(15px, 4vw, 25px);
+}
+
+.loading-text {
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: 600;
+  letter-spacing: 5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Media query for very small screens */
+@media (max-width: 480px) {
+  .loading-logo {
+    height: 70px;
+  }
+  
+  .loading-spinner {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .loading-text {
+    font-size: 14px;
   }
 }
