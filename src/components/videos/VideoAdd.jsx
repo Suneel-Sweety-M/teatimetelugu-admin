@@ -6,15 +6,13 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
   const [titleEn, setTitleEn] = useState("");
   const [titleTe, setTitleTe] = useState("");
   const [ytId, setYtId] = useState("");
-  const [descEn, setDescEn] = useState("");
-  const [descTe, setDescTe] = useState("");
   const [subCategoryEn, setSubCategoryEn] = useState("");
   const [subCategoryTe, setSubCategoryTe] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   const onSubmit = async () => {
-    if (!titleEn || !ytId) {
-      toast.error("English Title and YouTube ID are required!");
+    if (!titleEn || !titleTe || !ytId) {
+      toast.error("English Title, Telugu Title and YouTube ID are required!");
       return;
     }
 
@@ -30,8 +28,6 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
         toast.success(res?.message);
         setTitleEn("");
         setTitleTe("");
-        setDescEn("");
-        setDescTe("");
         setYtId("");
         setSubCategoryEn("");
         setSubCategoryTe("");
@@ -41,7 +37,7 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong!");
+      // toast.error("Something went wrong!");
     } finally {
       setIsSaving(false);
     }
@@ -94,28 +90,6 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
             />
           </div>
 
-          {/* Description EN */}
-          <div className="wns-box das-my20 das-py20">
-            <h3 className="text-start">Description (English)</h3>
-            <textarea
-              placeholder="English description..."
-              className="br5"
-              value={descEn}
-              onChange={(e) => setDescEn(e.target.value)}
-            />
-          </div>
-
-          {/* Description TE */}
-          <div className="wns-box das-my20 das-py20">
-            <h3 className="text-start">Description (Telugu)</h3>
-            <textarea
-              placeholder="Telugu description..."
-              className="br5"
-              value={descTe}
-              onChange={(e) => setDescTe(e.target.value)}
-            />
-          </div>
-
           {/* SubCategory EN */}
           <div className="wns-box das-my20 das-py20">
             <h3 className="text-start">Sub Category (English)</h3>
@@ -126,8 +100,8 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
             >
               <option value="">Select Here</option>
               <option value="trailers">Trailer</option>
-              <option value="video songs">Video Songs</option>
-              <option value="lyrical videos">Lyrical Songs</option>
+              <option value="video_songs">Video Songs</option>
+              <option value="lyrical_videos">Lyrical Songs</option>
               <option value="events">Events</option>
               <option value="shows">Shows</option>
               <option value="ott">OTT</option>
@@ -137,13 +111,19 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
           {/* SubCategory TE */}
           <div className="wns-box das-my20 das-py20">
             <h3 className="text-start">Sub Category (Telugu)</h3>
-            <input
-              type="text"
-              placeholder="Telugu SubCategory..."
+            <select
               className="br5"
-              value={subCategoryTe}
-              onChange={(e) => setSubCategoryTe(e.target.value)}
-            />
+              value={subCategoryEn}
+              onChange={(e) => setSubCategoryEn(e.target.value)}
+            >
+              <option value="">Select Here</option>
+              <option value="ట్రైలర్">ట్రైలర్</option>
+              <option value="వీడియో పాటలు">వీడియో పాటలు</option>
+              <option value="లిరికల్ వీడియోలు">లిరికల్ వీడియోలు</option>
+              <option value="ఈవెంట్స్">ఈవెంట్స్</option>
+              <option value="షోలు">షోలు</option>
+              <option value="ఓటిటి">ఓటిటి</option>
+            </select>
           </div>
 
           {/* Buttons */}

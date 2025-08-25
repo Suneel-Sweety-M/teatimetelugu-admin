@@ -161,11 +161,14 @@ const Videos = () => {
                 onChange={(e) => setTime(e.target.value)}
               >
                 <option value="">Select Time</option>
-                <option value="last24h">Last 1 day</option>
-                <option value="last1week">Last 1 week</option>
-                <option value="last1month">Last 1 month</option>
-                <option value="last6months">Last 6 months</option>
+                <option value="24h">Last 1 day</option>
+                <option value="week">Last 1 week</option>
+                <option value="month">Last 1 month</option>
+                <option value="6months">Last 6 months</option>
                 <option value="above6months">Above 6 months</option>
+                <option value="above1year">Above 1 year</option>
+                <option value="above2years">Above 2 years</option>
+                <option value="above3years">Above 3 years</option>
               </select>
             </div>
           </div>

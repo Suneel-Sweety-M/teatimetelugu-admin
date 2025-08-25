@@ -138,10 +138,7 @@ function App() {
         />
 
         {/* Catch all route - redirect based on auth status */}
-        <Route
-          path="*"
-          element={user ? <PageNotFound /> : <Navigate to="/" replace />}
-        />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

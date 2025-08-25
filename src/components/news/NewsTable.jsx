@@ -218,11 +218,14 @@ const NewsTable = () => {
                   onChange={(e) => setTime(e.target.value)}
                 >
                   <option value="">Selecte Time</option>
-                  <option value="1day">Last 24h</option>
-                  <option value="1week">Last week</option>
-                  <option value="1month">Last 1 month</option>
-                  <option value="6month">Last 6 month</option>
-                  <option value="older">Above 6 month</option>
+                  <option value="24h">Last 24h</option>
+                  <option value="week">Last week</option>
+                  <option value="month">Last 1 month</option>
+                  <option value="6months">Last 6 months</option>
+                  <option value="above6months">Above 6 months</option>
+                  <option value="above1year">Above 1 year</option>
+                  <option value="above2years">Above 2 years</option>
+                  <option value="above3years">Above 3 years</option>
                 </select>
               </div>
             </div>

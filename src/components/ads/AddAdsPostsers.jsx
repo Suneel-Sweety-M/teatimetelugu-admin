@@ -19,7 +19,7 @@ import {
   setNewsShortAd,
   setPopupPoster,
 } from "../../helper/apis";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify"; 
 
 const AddAdsPosters = () => {
   const [popupPosterImg, setPopupPosterImg] = useState("");
