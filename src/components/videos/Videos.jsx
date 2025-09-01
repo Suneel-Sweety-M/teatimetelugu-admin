@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { deleteVideo, getFilteredVideos } from "../../helper/apis"; // API wrapper
 import VideoAdd from "./VideoAdd";
 import Popup from "../confirmation-popup/Popup";
@@ -15,7 +14,7 @@ const Videos = () => {
   const [totalItems, setTotalItems] = useState(0);
 
   const [cache, setCache] = useState({}); // { "filters|limit": {1:[..], 2:[..]} }
-  const [currentVideos, setCurrentVideos] = useState([]);
+  const [currentVideos, setCurrentVideos] = useState([]); 
   const [isLoading, setIsLoading] = useState(false);
 
   const [popupBox, setPopupBox] = useState(false);
@@ -106,7 +105,7 @@ const Videos = () => {
         toast.success(res?.message);
         setDeleteId("");
         setDeletePopup(false);
-        fetchVideos();
+        fetchVideos(currentPage, false);
       } else {
         toast.error(res?.message);
       }
@@ -187,17 +186,21 @@ const Videos = () => {
                     />
                     <div className="das-video-card-texts">
                       <p className="text-capital">{item?.subCategory?.en}</p>
-                      <Link to={`/${item?.category}/v/${item?._id}`}>
+                      <a
+                        href={`https://teatimetelugu.com/videos/v/${item?.newsId}`}
+                        target="blank"
+                      >
                         <h4 className="threelineselpsis">{item?.title?.en}</h4>
-                      </Link>
+                      </a>
                     </div>
                     <div className="das-video-card-btns">
-                      <Link
-                        to={`/${item?.category}/v/${item?._id}`}
+                      <a
+                        href={`https://teatimetelugu.com/videos/v/${item?.newsId}`}
+                        target="blank"
                         className="das-video-card-btn view-btn"
                       >
                         <i className="fa fa-eye"></i> <span>View</span>
-                      </Link>
+                      </a>
                       <div
                         className="das-video-card-btn das-delete-btn"
                         onClick={() => {

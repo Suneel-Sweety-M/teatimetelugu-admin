@@ -4,10 +4,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PopupNews from "./PopupNews";
-import {
-  addHotTopics,
-  getHotTopics,
-} from "../../helper/apis";
+import { addHotTopics, getHotTopics } from "../../helper/apis";
 
 const HotTopics = () => {
   const { user, lang } = useSelector((state) => state.teatimetelugu_admin);
@@ -77,7 +74,10 @@ const HotTopics = () => {
   };
 
   const handleView = (news) => {
-    navigate(`/${news?.category}/${news?.newsId}`);
+    window.open(
+      `https://teatimetelugu.com/${news?.category?.en}/${news?.newsId}`,
+      "_blank"
+    );
   };
 
   useEffect(() => {

@@ -69,7 +69,7 @@ const BreakingNews = () => {
   };
 
   const handleView = (news) => {
-    navigate(`/${news?.category}/${news?.newsId}`);
+    window.open(`https://teatimetelugu.com/${news?.category?.en}/${news?.newsId}`, "_blank");
   };
 
   useEffect(() => {

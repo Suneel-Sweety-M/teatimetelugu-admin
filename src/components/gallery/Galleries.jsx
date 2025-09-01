@@ -114,7 +114,7 @@ const Galleries = () => {
   };
 
   const handleView = (news) => {
-    navigate(`/${news?.category}/${news?._id}`);
+    window.open(`https://teatimetelugu.com/gallery/${news?.newsId}`, "_blank");
   };
 
   const handleDeletePopup = async (id) => {

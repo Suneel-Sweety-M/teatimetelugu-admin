@@ -129,7 +129,7 @@ const NewsTable = () => {
   };
 
   const handleView = (news) => {
-    navigate(`/${news?.category}/${news?._id}`);
+    window.open(`https://teatimetelugu.com/${news?.category?.en}/${news?.newsId}`, "_blank");
   };
 
   const handleDeletePopup = async (id) => {

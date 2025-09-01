@@ -16,7 +16,7 @@ const NewsEdit = () => {
   const [subCategoryEn, setSubCategoryEn] = useState("");
   const [subCategoryTe, setSubCategoryTe] = useState("");
   const [movieRating, setMovieRating] = useState(0);
-  const [descriptionEn, setDescriptionEn] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState(""); 
   const [descriptionTe, setDescriptionTe] = useState("");
   const [mainFile, setMainFile] = useState(null);
   const [preview, setPreview] = useState(null);
