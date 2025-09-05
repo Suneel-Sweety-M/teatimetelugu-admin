@@ -6,7 +6,7 @@ const initialState = {
   lang: "en",
 };
 
-const userSlice = createSlice({
+const userSlice = createSlice({ 
   name: "user",
   initialState,
   reducers: {

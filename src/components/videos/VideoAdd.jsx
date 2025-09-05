@@ -6,8 +6,8 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
   const [titleEn, setTitleEn] = useState("");
   const [titleTe, setTitleTe] = useState("");
   const [ytId, setYtId] = useState("");
-  const [subCategoryEn, setSubCategoryEn] = useState("");
-  const [subCategoryTe, setSubCategoryTe] = useState("");
+  const [subCategoryEn, setSubCategoryEn] = useState("latest");
+  const [subCategoryTe, setSubCategoryTe] = useState("తాజా వీడియోలు");
   const [isSaving, setIsSaving] = useState(false);
 
   const onSubmit = async () => {
@@ -98,10 +98,10 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
               value={subCategoryEn}
               onChange={(e) => setSubCategoryEn(e.target.value)}
             >
-              <option value="">Select Here</option>
+              <option value="latest">Select Here</option>
               <option value="trailers">Trailer</option>
               <option value="video_songs">Video Songs</option>
-              <option value="lyrical_videos">Lyrical Songs</option>
+              <option value="lyrical_songs">Lyrical Songs</option>
               <option value="events">Events</option>
               <option value="shows">Shows</option>
               <option value="ott">OTT</option>
@@ -113,13 +113,13 @@ const VideoAdd = ({ setPopupBox, fetchVideos }) => {
             <h3 className="text-start">Sub Category (Telugu)</h3>
             <select
               className="br5"
-              value={subCategoryEn}
-              onChange={(e) => setSubCategoryEn(e.target.value)}
+              value={subCategoryTe}
+              onChange={(e) => setSubCategoryTe(e.target.value)}
             >
-              <option value="">Select Here</option>
+              <option value="తాజా వీడియోలు">ఇక్కడ ఎంచుకోండి</option>
               <option value="ట్రైలర్">ట్రైలర్</option>
-              <option value="వీడియో పాటలు">వీడియో పాటలు</option>
-              <option value="లిరికల్ వీడియోలు">లిరికల్ వీడియోలు</option>
+              <option value="వీడియో సాంగ్స్">వీడియో సాంగ్స్</option>
+              <option value="లిరికల్ సాంగ్స్">లిరికల్ సాంగ్స్</option>
               <option value="ఈవెంట్స్">ఈవెంట్స్</option>
               <option value="షోలు">షోలు</option>
               <option value="ఓటిటి">ఓటిటి</option>

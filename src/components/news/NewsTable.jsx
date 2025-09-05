@@ -129,7 +129,10 @@ const NewsTable = () => {
   };
 
   const handleView = (news) => {
-    window.open(`https://teatimetelugu.com/${news?.category?.en}/${news?.newsId}`, "_blank");
+    window.open(
+      `https://teatimetelugu.com/${news?.category?.en}/${news?.newsId}`,
+      "_blank"
+    );
   };
 
   const handleDeletePopup = async (id) => {
@@ -145,7 +148,7 @@ const NewsTable = () => {
         toast.success(res?.message);
         setDeleteId("");
         setDeletePopup(false);
-        fetchNews();
+        fetchNews(currentPage, true); // refetch current page
       } else {
         toast.error(res?.message);
       }
@@ -231,19 +234,19 @@ const NewsTable = () => {
             </div>
           </div>
 
-          <table className="das-all-news-section">
-            <thead>
-              <tr>
-                <th className="table-sn">Index</th>
-                <th className="table-title">Title</th>
-                <th className="table-image">Image</th>
-                <th className="table-category">Category</th>
-                <th className="table-date">Date</th>
-                <th className="table-status">Writer</th>
-                <th className="table-action">Action</th>
-              </tr>
-            </thead>
-            {!isLoading ? (
+          {!isLoading ? (
+            <table className="das-all-news-section">
+              <thead>
+                <tr>
+                  <th className="table-sn">Index</th>
+                  <th className="table-title">Title</th>
+                  <th className="table-image">Image</th>
+                  <th className="table-category">Category</th>
+                  <th className="table-date">Date</th>
+                  <th className="table-status">Writer</th>
+                  <th className="table-action">Action</th>
+                </tr>
+              </thead>
               <tbody>
                 {currentNews?.length > 0 ? (
                   currentNews?.map((item, index) => (
@@ -288,10 +291,17 @@ const NewsTable = () => {
                   <p>No posts available</p>
                 )}
               </tbody>
-            ) : (
-              <h3 className="text-center">Loading...</h3>
-            )}
-          </table>
+            </table>
+          ) : (
+            <div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+            </div>
+          )}
 
           {!isLoading && (
             <div className="das-all-news-pagenation">

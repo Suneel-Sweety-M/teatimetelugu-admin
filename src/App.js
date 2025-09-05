@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     async function fetchUser() {
-      try {
+      try { 
         const res = await getLoggedinUser();
         if (res?.status !== "fail") {
           dispatch(login(res));

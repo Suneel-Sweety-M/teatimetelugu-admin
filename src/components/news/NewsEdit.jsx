@@ -16,7 +16,7 @@ const NewsEdit = () => {
   const [subCategoryEn, setSubCategoryEn] = useState("");
   const [subCategoryTe, setSubCategoryTe] = useState("");
   const [movieRating, setMovieRating] = useState(0);
-  const [descriptionEn, setDescriptionEn] = useState(""); 
+  const [descriptionEn, setDescriptionEn] = useState("");
   const [descriptionTe, setDescriptionTe] = useState("");
   const [mainFile, setMainFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -26,10 +26,12 @@ const NewsEdit = () => {
   const [tagsTextTe, setTagsTextTe] = useState("");
   const [isUpload, setIsUpload] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // ✅ Fetch existing news
   useEffect(() => {
     const fetchNews = async () => {
+      setIsLoading(true);
       try {
         const res = await getNewsById(newsId);
         if (res?.status === "success") {
@@ -53,6 +55,8 @@ const NewsEdit = () => {
       } catch (err) {
         console.error(err);
         toast.error("Error fetching news");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchNews();
@@ -87,6 +91,14 @@ const NewsEdit = () => {
     if (lang === "en") setTagsEn(tagsEn.filter((t) => t !== tagToRemove));
     else setTagsTe(tagsTe.filter((t) => t !== tagToRemove));
   };
+
+  useEffect(() => {
+    setSubCategoryEn(""); // reset English subcategory when category changes
+  }, [categoryEn]);
+
+  useEffect(() => {
+    setSubCategoryTe(""); // reset Telugu subcategory when category changes
+  }, [categoryTe]);
 
   // ✅ Update Post
   const handleUpdate = async () => {
@@ -132,397 +144,433 @@ const NewsEdit = () => {
     <div className="write-news-container das-my20">
       <div className="das-news-container">
         <div className="das-news-container-title">Edit News</div>
-        <div className="write-news-section">
-          {/* ✅ Title Inputs */}
-          <div className="wns-box das-my20 das-py20">
-            <h3>Title (English)</h3>
-            <input
-              type="text"
-              className="br5"
-              value={titleEn}
-              onChange={(e) => setTitleEn(e.target.value)}
-            />
-          </div>
-          <div className="wns-box das-my20 das-py20">
-            <h3>Title (Telugu)</h3>
-            <input
-              type="text"
-              className="br5"
-              value={titleTe}
-              onChange={(e) => setTitleTe(e.target.value)}
-            />
-          </div>
-
-          {/* ✅ Image Upload */}
-          {preview ? (
-            <div className="wns-box das-my20 das-py20">
-              <h3>Main Image</h3>
-              <label htmlFor="file" className="preview-img cp">
-                <img src={preview} alt="uploaded-pic" />
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                id="file"
-                style={{ display: "none" }}
-              />
+        {isLoading ? (
+          <div className="single-news-loading-container single-news-duo-left">
+            <div className="snlc-title">
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-half-text"></div>
             </div>
-          ) : (
-            <div className="wns-box das-my20 das-py20">
-              <h3>Add Image</h3>
-              <label htmlFor="mainPic" className="br5 upload-news-img cp">
-                <div className="upload-news-img-box dfc fdc">
-                  <i className="fa fa-cloud-arrow-up"></i>
-                  <span>Upload or Drag & Drop Image</span>
-                </div>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                id="mainPic"
-                style={{ display: "none" }}
-              />
+            <div className="snlc-img"></div>
+            <div className="snlc-desc">
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-text"></div>
+              <div className="snlc-half-text"></div>
             </div>
-          )}
-
-          {/* ✅ Description Editors */}
-          <div className="wns-box das-my20 das-py20">
-            <h3>Description (English)</h3>
-            <JoditEditor
-              value={descriptionEn}
-              onChange={(c) => setDescriptionEn(c)}
-            />
           </div>
-          <div className="wns-box das-my20 das-py20">
-            <h3>Description (Telugu)</h3>
-            <JoditEditor
-              value={descriptionTe}
-              onChange={(c) => setDescriptionTe(c)}
-            />
-          </div>
-
-          {/* ✅ Tags English */}
-          <div className="wns-box das-my20 das-py20">
-            <h3>Tags (English)</h3>
-            <form
-              onSubmit={(e) => handleTags(e, "en")}
-              className="das-d-flex pt10"
-            >
+        ) : (
+          <div className="write-news-section">
+            {/* ✅ Title Inputs */}
+            <div className="wns-box das-my20 das-py20">
+              <h3>Title (English)</h3>
               <input
                 type="text"
-                value={tagsTextEn}
-                onChange={(e) => setTagsTextEn(e.target.value)}
                 className="br5"
-                placeholder="Ex. Chandrababu, AP Politics"
+                value={titleEn}
+                onChange={(e) => setTitleEn(e.target.value)}
               />
-              <button type="submit" className="btn save-btn">
-                Add
-              </button>
-            </form>
-            {tagsEn.length > 0 && (
-              <div className="wns-box-all-tags">
-                {tagsEn.map((tag, i) => (
-                  <div className="wns-box-tag box-shadow p10 m10" key={i}>
-                    <span className="mr10">{tag}</span>
-                    <i
-                      className="fa fa-xmark cp"
-                      onClick={() => removeTag(tag, "en")}
-                    ></i>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ✅ Tags Telugu */}
-          <div className="wns-box das-my20 das-py20">
-            <h3>Tags (Telugu)</h3>
-            <form
-              onSubmit={(e) => handleTags(e, "te")}
-              className="das-d-flex pt10"
-            >
+            </div>
+            <div className="wns-box das-my20 das-py20">
+              <h3>Title (Telugu)</h3>
               <input
                 type="text"
-                value={tagsTextTe}
-                onChange={(e) => setTagsTextTe(e.target.value)}
                 className="br5"
-                placeholder="ఉదా: చంద్రబాబు, రాజకీయాలు"
+                value={titleTe}
+                onChange={(e) => setTitleTe(e.target.value)}
               />
-              <button type="submit" className="btn save-btn">
-                Add
-              </button>
-            </form>
-            {tagsTe.length > 0 && (
-              <div className="wns-box-all-tags">
-                {tagsTe.map((tag, i) => (
-                  <div className="wns-box-tag box-shadow p10 m10" key={i}>
-                    <span className="mr10">{tag}</span>
-                    <i
-                      className="fa fa-xmark cp"
-                      onClick={() => removeTag(tag, "te")}
-                    ></i>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ✅ Categories + Subcategories (English & Telugu) */}
-          {/* ✅ En Categories */}
-          <div className="other-details">
-            <div className="wns-box das-my20 das-py20">
-              <h3 className="">English Category</h3>
-              <select
-                name=""
-                id=""
-                className="br5"
-                value={categoryEn}
-                onChange={(e) => setCategoryEn(e.target.value)}
-              >
-                <option value="">Select Here</option>
-                <option value="news">News</option>
-                <option value="politics">Politics</option>
-                <option value="movies">Movies</option>
-                <option value="ott">OTT</option>
-                <option value="show">Show</option>
-                <option value="gossips">Gossips</option>
-                <option value="reviews">Reviews</option>
-                <option value="sports">Sports</option>
-              </select>
             </div>
-            <div className="wns-box das-my20 das-py20">
-              <h3 className="">English Sub Category</h3>
-              <select
-                name=""
-                id=""
-                className="br5"
-                value={subCategoryEn}
-                onChange={(e) => setSubCategoryEn(e.target.value)}
-              >
-                <option value="">Select Here</option>
 
-                {categoryEn === "news" && <option value="ap">Andhra</option>}
-                {categoryEn === "news" && <option value="ts">Telengana</option>}
-                {categoryEn === "news" && (
-                  <option value="national">National</option>
-                )}
-                {categoryEn === "news" && (
-                  <option value="international">International</option>
-                )}
-
-                {categoryEn === "politics" && (
-                  <option value="ap">Andhra</option>
-                )}
-                {categoryEn === "politics" && (
-                  <option value="ts">Telengana</option>
-                )}
-                {categoryEn === "politics" && (
-                  <option value="national">National</option>
-                )}
-                {categoryEn === "politics" && (
-                  <option value="international">International</option>
-                )}
-
-                {categoryEn === "movies" && (
-                  <option value="tollywood">Tollywood</option>
-                )}
-                {categoryEn === "movies" && (
-                  <option value="bollywood">Bollywood</option>
-                )}
-                {categoryEn === "movies" && (
-                  <option value="hollywood">Hollywood</option>
-                )}
-                {categoryEn === "movies" && (
-                  <option value="south">South Cinema</option>
-                )}
-                {categoryEn === "movies" && (
-                  <option value="collections">Collections</option>
-                )}
-
-                {categoryEn === "ott" && <option value="review">Review</option>}
-                {categoryEn === "ott" && (
-                  <option value="release">Release</option>
-                )}
-
-                {categoryEn === "show" && <option value="tv">TV</option>}
-
-                {categoryEn === "gossips" && (
-                  <option value="movies">Movies</option>
-                )}
-
-                {categoryEn === "gossips" && (
-                  <option value="ts-political">TS Political</option>
-                )}
-
-                {categoryEn === "gossips" && (
-                  <option value="ap-political">AP Political</option>
-                )}
-
-                {categoryEn === "reviews" && (
-                  <option value="theater">Theater</option>
-                )}
-                {categoryEn === "reviews" && <option value="ott">OTT</option>}
-                {categoryEn === "reviews" && (
-                  <option value="rerelease">Re-release</option>
-                )}
-
-                {categoryEn === "sports" && (
-                  <option value="cricket">Cricket</option>
-                )}
-                {categoryEn === "sports" && (
-                  <option value="football">Football</option>
-                )}
-                {categoryEn === "sports" && (
-                  <option value="olympics">Olympics</option>
-                )}
-              </select>
-            </div>
-          </div>
-
-          <div className="other-details">
-            <div className="wns-box das-my20 das-py20">
-              <h3 className="">Telugu Category</h3>
-              <select
-                name=""
-                id=""
-                className="br5"
-                value={categoryTe}
-                onChange={(e) => setCategoryTe(e.target.value)}
-              >
-                <option value="">Select Here</option>
-                <option value="news">News</option>
-                <option value="politics">Politics</option>
-                <option value="movies">Movies</option>
-                <option value="ott">OTT</option>
-                <option value="show">Show</option>
-                <option value="gossips">Gossips</option>
-                <option value="reviews">Reviews</option>
-                <option value="sports">Sports</option>
-              </select>
-            </div>
-            <div className="wns-box das-my20 das-py20">
-              <h3 className="">Telugu Sub Category</h3>
-              <select
-                name=""
-                id=""
-                className="br5"
-                value={subCategoryTe}
-                onChange={(e) => setSubCategoryTe(e.target.value)}
-              >
-                <option value="">Select Here</option>
-
-                {categoryTe === "news" && <option value="ap">Andhra</option>}
-                {categoryTe === "news" && <option value="ts">TelTegana</option>}
-                {categoryTe === "news" && (
-                  <option value="national">National</option>
-                )}
-                {categoryTe === "news" && (
-                  <option value="international">International</option>
-                )}
-
-                {categoryTe === "politics" && (
-                  <option value="ap">Andhra</option>
-                )}
-                {categoryTe === "politics" && (
-                  <option value="ts">TelTegana</option>
-                )}
-                {categoryTe === "politics" && (
-                  <option value="national">National</option>
-                )}
-                {categoryTe === "politics" && (
-                  <option value="international">International</option>
-                )}
-
-                {categoryTe === "movies" && (
-                  <option value="tollywood">Tollywood</option>
-                )}
-                {categoryTe === "movies" && (
-                  <option value="bollywood">Bollywood</option>
-                )}
-                {categoryTe === "movies" && (
-                  <option value="hollywood">Hollywood</option>
-                )}
-                {categoryTe === "movies" && (
-                  <option value="south">South Cinema</option>
-                )}
-                {categoryTe === "movies" && (
-                  <option value="collections">Collections</option>
-                )}
-
-                {categoryTe === "ott" && <option value="review">Review</option>}
-                {categoryTe === "ott" && (
-                  <option value="release">Release</option>
-                )}
-
-                {categoryTe === "show" && <option value="tv">TV</option>}
-
-                {categoryTe === "gossips" && (
-                  <option value="movies">Movies</option>
-                )}
-
-                {categoryTe === "gossips" && (
-                  <option value="ts-political">TS Political</option>
-                )}
-
-                {categoryTe === "gossips" && (
-                  <option value="ap-political">AP Political</option>
-                )}
-
-                {categoryTe === "reviews" && (
-                  <option value="theater">Theater</option>
-                )}
-                {categoryTe === "reviews" && <option value="ott">OTT</option>}
-                {categoryTe === "reviews" && (
-                  <option value="rerelease">Re-release</option>
-                )}
-
-                {categoryTe === "sports" && (
-                  <option value="cricket">Cricket</option>
-                )}
-                {categoryTe === "sports" && (
-                  <option value="football">Football</option>
-                )}
-                {categoryTe === "sports" && (
-                  <option value="olympics">Olympics</option>
-                )}
-              </select>
-            </div>
-          </div>
-
-          {/* ✅ Movie Rating (only for reviews) */}
-          {categoryEn === "reviews" && (
-            <div className="wns-box das-my20 das-py20">
-              <h3>Movie Rating</h3>
-              <select
-                className="br5"
-                value={movieRating}
-                onChange={(e) => setMovieRating(e.target.value)}
-              >
-                {[0, 1, 2, 3, 4, 5].map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* ✅ Buttons */}
-          <div className="other-details">
-            <div className="cancel-news-btn btn" onClick={() => navigate(-1)}>
-              Cancel
-            </div>
-            {!isSaving ? (
-              <div className="post-news-btn btn" onClick={handleUpdate}>
-                Update
+            {/* ✅ Image Upload */}
+            {preview ? (
+              <div className="wns-box das-my20 das-py20">
+                <h3>Main Image</h3>
+                <label htmlFor="file" className="preview-img cp">
+                  <img src={preview} alt="uploaded-pic" />
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  id="file"
+                  style={{ display: "none" }}
+                />
               </div>
             ) : (
-              <button className="is-submitting-btn btn">Updating...</button>
+              <div className="wns-box das-my20 das-py20">
+                <h3>Add Image</h3>
+                <label htmlFor="mainPic" className="br5 upload-news-img cp">
+                  <div className="upload-news-img-box dfc fdc">
+                    <i className="fa fa-cloud-arrow-up"></i>
+                    <span>Upload or Drag & Drop Image</span>
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  id="mainPic"
+                  style={{ display: "none" }}
+                />
+              </div>
             )}
+
+            {/* ✅ Description Editors */}
+            <div className="wns-box das-my20 das-py20">
+              <h3>Description (English)</h3>
+              <JoditEditor
+                value={descriptionEn}
+                onChange={(c) => setDescriptionEn(c)}
+              />
+            </div>
+            <div className="wns-box das-my20 das-py20">
+              <h3>Description (Telugu)</h3>
+              <JoditEditor
+                value={descriptionTe}
+                onChange={(c) => setDescriptionTe(c)}
+              />
+            </div>
+
+            {/* ✅ Tags English */}
+            <div className="wns-box das-my20 das-py20">
+              <h3>Tags (English)</h3>
+              <form
+                onSubmit={(e) => handleTags(e, "en")}
+                className="das-d-flex pt10"
+              >
+                <input
+                  type="text"
+                  value={tagsTextEn}
+                  onChange={(e) => setTagsTextEn(e.target.value)}
+                  className="br5"
+                  placeholder="Ex. Chandrababu, AP Politics"
+                />
+                <button type="submit" className="btn save-btn">
+                  Add
+                </button>
+              </form>
+              {tagsEn.length > 0 && (
+                <div className="wns-box-all-tags">
+                  {tagsEn.map((tag, i) => (
+                    <div className="wns-box-tag box-shadow p10 m10" key={i}>
+                      <span className="mr10">{tag}</span>
+                      <i
+                        className="fa fa-xmark cp"
+                        onClick={() => removeTag(tag, "en")}
+                      ></i>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ✅ Tags Telugu */}
+            <div className="wns-box das-my20 das-py20">
+              <h3>Tags (Telugu)</h3>
+              <form
+                onSubmit={(e) => handleTags(e, "te")}
+                className="das-d-flex pt10"
+              >
+                <input
+                  type="text"
+                  value={tagsTextTe}
+                  onChange={(e) => setTagsTextTe(e.target.value)}
+                  className="br5"
+                  placeholder="ఉదా: చంద్రబాబు, రాజకీయాలు"
+                />
+                <button type="submit" className="btn save-btn">
+                  Add
+                </button>
+              </form>
+              {tagsTe.length > 0 && (
+                <div className="wns-box-all-tags">
+                  {tagsTe.map((tag, i) => (
+                    <div className="wns-box-tag box-shadow p10 m10" key={i}>
+                      <span className="mr10">{tag}</span>
+                      <i
+                        className="fa fa-xmark cp"
+                        onClick={() => removeTag(tag, "te")}
+                      ></i>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ✅ Categories + Subcategories (English & Telugu) */}
+            {/* ✅ En Categories */}
+            <div className="other-details">
+              <div className="wns-box das-my20 das-py20">
+                <h3 className="">English Category</h3>
+                <select
+                  name=""
+                  id=""
+                  className="br5"
+                  value={categoryEn}
+                  onChange={(e) => setCategoryEn(e.target.value)}
+                >
+                  <option value="">Select Here</option>
+                  <option value="news">News</option>
+                  <option value="politics">Politics</option>
+                  <option value="movies">Movies</option>
+                  <option value="ott">OTT</option>
+                  <option value="show">Show</option>
+                  <option value="gossips">Gossips</option>
+                  <option value="reviews">Reviews</option>
+                  <option value="sports">Sports</option>
+                </select>
+              </div>
+              <div className="wns-box das-my20 das-py20">
+                <h3 className="">English Sub Category</h3>
+                <select
+                  name=""
+                  id=""
+                  className="br5"
+                  value={subCategoryEn}
+                  onChange={(e) => setSubCategoryEn(e.target.value)}
+                >
+                  <option value="">Select Here</option>
+
+                  {categoryEn === "news" && <option value="ap">Andhra</option>}
+                  {categoryEn === "news" && (
+                    <option value="ts">Telengana</option>
+                  )}
+                  {categoryEn === "news" && (
+                    <option value="national">National</option>
+                  )}
+                  {categoryEn === "news" && (
+                    <option value="international">International</option>
+                  )}
+
+                  {categoryEn === "politics" && (
+                    <option value="ap">Andhra</option>
+                  )}
+                  {categoryEn === "politics" && (
+                    <option value="ts">Telengana</option>
+                  )}
+                  {categoryEn === "politics" && (
+                    <option value="national">National</option>
+                  )}
+                  {categoryEn === "politics" && (
+                    <option value="international">International</option>
+                  )}
+
+                  {categoryEn === "movies" && (
+                    <option value="tollywood">Tollywood</option>
+                  )}
+                  {categoryEn === "movies" && (
+                    <option value="bollywood">Bollywood</option>
+                  )}
+                  {categoryEn === "movies" && (
+                    <option value="hollywood">Hollywood</option>
+                  )}
+                  {categoryEn === "movies" && (
+                    <option value="south">South Cinema</option>
+                  )}
+                  {categoryEn === "movies" && (
+                    <option value="collections">Collections</option>
+                  )}
+
+                  {categoryEn === "ott" && (
+                    <option value="review">Review</option>
+                  )}
+                  {categoryEn === "ott" && (
+                    <option value="release">Release</option>
+                  )}
+
+                  {categoryEn === "show" && <option value="tv">TV</option>}
+
+                  {categoryEn === "gossips" && (
+                    <option value="movies">Movies</option>
+                  )}
+
+                  {categoryEn === "gossips" && (
+                    <option value="ts-political">TS Political</option>
+                  )}
+
+                  {categoryEn === "gossips" && (
+                    <option value="ap-political">AP Political</option>
+                  )}
+
+                  {categoryEn === "reviews" && (
+                    <option value="theater">Theater</option>
+                  )}
+                  {categoryEn === "reviews" && <option value="ott">OTT</option>}
+                  {categoryEn === "reviews" && (
+                    <option value="rerelease">Re-release</option>
+                  )}
+
+                  {categoryEn === "sports" && (
+                    <option value="cricket">Cricket</option>
+                  )}
+                  {categoryEn === "sports" && (
+                    <option value="football">Football</option>
+                  )}
+                  {categoryEn === "sports" && (
+                    <option value="olympics">Olympics</option>
+                  )}
+                </select>
+              </div>
+            </div>
+
+            <div className="other-details">
+              <div className="wns-box das-my20 das-py20">
+                <h3 className="">తెలుగు కేటగిరీ</h3>
+                <select
+                  name=""
+                  id=""
+                  className="br5"
+                  value={categoryTe}
+                  onChange={(e) => setCategoryTe(e.target.value)}
+                >
+                  <option value="">ఇక్కడ ఎంచుకోండి</option>
+                  <option value="న్యూస్">న్యూస్</option>
+                  <option value="రాజకీయాలు">రాజకీయాలు</option>
+                  <option value="సినిమాలు">సినిమాలు</option>
+                  <option value="ఓటిటి">ఓటిటి</option>
+                  <option value="షోస్">షోస్</option>
+                  <option value="గాసిప్స్">గాసిప్స్</option>
+                  <option value="సమీక్షలు">సమీక్షలు</option>
+                  <option value="క్రీడలు">క్రీడలు</option>
+                </select>
+              </div>
+              <div className="wns-box das-my20 das-py20">
+                <h3 className="">తెలుగు సబ్ కేటగిరీ</h3>
+                <select
+                  name=""
+                  id=""
+                  className="br5"
+                  value={subCategoryTe}
+                  onChange={(e) => setSubCategoryTe(e.target.value)}
+                >
+                  <option value="">ఇక్కడ ఎంచుకోండి</option>
+
+                  {categoryTe === "న్యూస్" && (
+                    <option value="ఆంధ్రప్రదేశ్">ఆంధ్రప్రదేశ్</option>
+                  )}
+                  {categoryTe === "న్యూస్" && (
+                    <option value="తెలంగాణ">తెలంగాణ</option>
+                  )}
+                  {categoryTe === "న్యూస్" && (
+                    <option value="జాతీయ">జాతీయ</option>
+                  )}
+                  {categoryTe === "న్యూస్" && (
+                    <option value="అంతర్జాతీయ">అంతర్జాతీయ</option>
+                  )}
+
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="ఆంధ్రప్రదేశ్">ఆంధ్రప్రదేశ్</option>
+                  )}
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="తెలంగాణ">తెలంగాణ</option>
+                  )}
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="జాతీయ">జాతీయ</option>
+                  )}
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="అంతర్జాతీయ">అంతర్జాతీయ</option>
+                  )}
+
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="టాలీవుడ్">టాలీవుడ్</option>
+                  )}
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="బాలీవుడ్">బాలీవుడ్</option>
+                  )}
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="హాలీవుడ్">హాలీవుడ్</option>
+                  )}
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="సౌత్ సినిమా">సౌత్ సినిమా</option>
+                  )}
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="కలెక్షన్స్">కలెక్షన్స్</option>
+                  )}
+
+                  {categoryTe === "ఓటిటి" && (
+                    <option value="సమీక్ష">సమీక్ష</option>
+                  )}
+                  {categoryTe === "ఓటిటి" && (
+                    <option value="విడుదల">విడుదల</option>
+                  )}
+
+                  {categoryTe === "షోస్" && (
+                    <option value="టెలివిజన్ షో">టెలివిజన్ షో</option>
+                  )}
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="సినిమాలు">సినిమాలు</option>
+                  )}
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="తెలంగాణ రాజకీయాలు">తెలంగాణ రాజకీయాలు</option>
+                  )}
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="ఆంధ్రప్రదేశ్ రాజకీయాలు">
+                      ఆంధ్రప్రదేశ్ రాజకీయాలు
+                    </option>
+                  )}
+
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="థియేటర్">థియేటర్</option>
+                  )}
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="ఓటిటి">ఓటిటి</option>
+                  )}
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="మళ్లీ విడుదల">మళ్లీ విడుదల</option>
+                  )}
+
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="క్రికెట్">క్రికెట్</option>
+                  )}
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="ఫుట్‌బాల్">ఫుట్‌బాల్</option>
+                  )}
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="ఓలింపిక్స్">ఓలింపిక్స్</option>
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {/* ✅ Movie Rating (only for reviews) */}
+            {categoryEn === "reviews" && (
+              <div className="wns-box das-my20 das-py20">
+                <h3>Movie Rating</h3>
+                <select
+                  className="br5"
+                  value={movieRating}
+                  onChange={(e) => setMovieRating(e.target.value)}
+                >
+                  {[0, 1, 2, 3, 4, 5].map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* ✅ Buttons */}
+            <div className="other-details">
+              <div className="cancel-news-btn btn" onClick={() => navigate(-1)}>
+                Cancel
+              </div>
+              {!isSaving ? (
+                <div className="post-news-btn btn" onClick={handleUpdate}>
+                  Update
+                </div>
+              ) : (
+                <button className="is-submitting-btn btn">Updating...</button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       {isUpload && <UploadFile setIsUpload={setIsUpload} />}
     </div>

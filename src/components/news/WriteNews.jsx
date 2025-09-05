@@ -369,7 +369,7 @@ const WriteNews = () => {
 
             <div className="other-details">
               <div className="wns-box das-my20 das-py20">
-                <h3 className="">Telugu Category</h3>
+                <h3 className="">తెలుగు కేటగిరీ</h3>
                 <select
                   name=""
                   id=""
@@ -377,19 +377,19 @@ const WriteNews = () => {
                   value={categoryTe}
                   onChange={(e) => setCategoryTe(e.target.value)}
                 >
-                  <option value="">Select Here</option>
-                  <option value="news">News</option>
-                  <option value="politics">Politics</option>
-                  <option value="movies">Movies</option>
-                  <option value="ott">OTT</option>
-                  <option value="show">Show</option>
-                  <option value="gossips">Gossips</option>
-                  <option value="reviews">Reviews</option>
-                  <option value="sports">Sports</option>
+                  <option value="">ఇక్కడ ఎంచుకోండి</option>
+                  <option value="న్యూస్">న్యూస్</option>
+                  <option value="రాజకీయాలు">రాజకీయాలు</option>
+                  <option value="సినిమాలు">సినిమాలు</option>
+                  <option value="ఓటిటి">ఓటిటి</option>
+                  <option value="షోస్">షోస్</option>
+                  <option value="గాసిప్స్">గాసిప్స్</option>
+                  <option value="సమీక్షలు">సమీక్షలు</option>
+                  <option value="క్రీడలు">క్రీడలు</option>
                 </select>
               </div>
               <div className="wns-box das-my20 das-py20">
-                <h3 className="">Telugu Sub Category</h3>
+                <h3 className="">తెలుగు సబ్ కేటగిరీ</h3>
                 <select
                   name=""
                   id=""
@@ -397,85 +397,93 @@ const WriteNews = () => {
                   value={subCategoryTe}
                   onChange={(e) => setSubCategoryTe(e.target.value)}
                 >
-                  <option value="">Select Here</option>
+                  <option value="">ఇక్కడ ఎంచుకోండి</option>
 
-                  {categoryTe === "news" && <option value="ap">Andhra</option>}
-                  {categoryTe === "news" && (
-                    <option value="ts">TelTegana</option>
+                  {categoryTe === "న్యూస్" && (
+                    <option value="ఆంధ్రప్రదేశ్">ఆంధ్రప్రదేశ్</option>
                   )}
-                  {categoryTe === "news" && (
-                    <option value="national">National</option>
+                  {categoryTe === "న్యూస్" && (
+                    <option value="తెలంగాణ">తెలంగాణ</option>
                   )}
-                  {categoryTe === "news" && (
-                    <option value="international">International</option>
+                  {categoryTe === "న్యూస్" && (
+                    <option value="జాతీయ">జాతీయ</option>
                   )}
-
-                  {categoryTe === "politics" && (
-                    <option value="ap">Andhra</option>
-                  )}
-                  {categoryTe === "politics" && (
-                    <option value="ts">TelTegana</option>
-                  )}
-                  {categoryTe === "politics" && (
-                    <option value="national">National</option>
-                  )}
-                  {categoryTe === "politics" && (
-                    <option value="international">International</option>
+                  {categoryTe === "న్యూస్" && (
+                    <option value="అంతర్జాతీయ">అంతర్జాతీయ</option>
                   )}
 
-                  {categoryTe === "movies" && (
-                    <option value="tollywood">Tollywood</option>
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="ఆంధ్రప్రదేశ్">ఆంధ్రప్రదేశ్</option>
                   )}
-                  {categoryTe === "movies" && (
-                    <option value="bollywood">Bollywood</option>
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="తెలంగాణ">తెలంగాణ</option>
                   )}
-                  {categoryTe === "movies" && (
-                    <option value="hollywood">Hollywood</option>
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="జాతీయ">జాతీయ</option>
                   )}
-                  {categoryTe === "movies" && (
-                    <option value="south">South Cinema</option>
-                  )}
-                  {categoryTe === "movies" && (
-                    <option value="collections">Collections</option>
+                  {categoryTe === "రాజకీయాలు" && (
+                    <option value="అంతర్జాతీయ">అంతర్జాతీయ</option>
                   )}
 
-                  {categoryTe === "ott" && (
-                    <option value="review">Review</option>
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="టాలీవుడ్">టాలీవుడ్</option>
                   )}
-                  {categoryTe === "ott" && (
-                    <option value="release">Release</option>
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="బాలీవుడ్">బాలీవుడ్</option>
                   )}
-
-                  {categoryTe === "show" && <option value="tv">TV</option>}
-
-                  {categoryTe === "gossips" && (
-                    <option value="movies">Movies</option>
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="హాలీవుడ్">హాలీవుడ్</option>
                   )}
-
-                  {categoryTe === "gossips" && (
-                    <option value="ts-political">TS Political</option>
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="సౌత్ సినిమా">సౌత్ సినిమా</option>
                   )}
-
-                  {categoryTe === "gossips" && (
-                    <option value="ap-political">AP Political</option>
+                  {categoryTe === "సినిమాలు" && (
+                    <option value="కలెక్షన్స్">కలెక్షన్స్</option>
                   )}
 
-                  {categoryTe === "reviews" && (
-                    <option value="theater">Theater</option>
+                  {categoryTe === "ఓటిటి" && (
+                    <option value="సమీక్ష">సమీక్ష</option>
                   )}
-                  {categoryTe === "reviews" && <option value="ott">OTT</option>}
-                  {categoryTe === "reviews" && (
-                    <option value="rerelease">Re-release</option>
+                  {categoryTe === "ఓటిటి" && (
+                    <option value="విడుదల">విడుదల</option>
                   )}
 
-                  {categoryTe === "sports" && (
-                    <option value="cricket">Cricket</option>
+                  {categoryTe === "షోస్" && (
+                    <option value="టెలివిజన్ షో">టెలివిజన్ షో</option>
                   )}
-                  {categoryTe === "sports" && (
-                    <option value="football">Football</option>
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="సినిమాలు">సినిమాలు</option>
                   )}
-                  {categoryTe === "sports" && (
-                    <option value="olympics">Olympics</option>
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="తెలంగాణ రాజకీయాలు">తెలంగాణ రాజకీయాలు</option>
+                  )}
+
+                  {categoryTe === "గాసిప్స్" && (
+                    <option value="ఆంధ్రప్రదేశ్ రాజకీయాలు">
+                      ఆంధ్రప్రదేశ్ రాజకీయాలు
+                    </option>
+                  )}
+
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="థియేటర్">థియేటర్</option>
+                  )}
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="ఓటిటి">ఓటిటి</option>
+                  )}
+                  {categoryTe === "సమీక్షలు" && (
+                    <option value="మళ్లీ విడుదల">మళ్లీ విడుదల</option>
+                  )}
+
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="క్రికెట్">క్రికెట్</option>
+                  )}
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="ఫుట్‌బాల్">ఫుట్‌బాల్</option>
+                  )}
+                  {categoryTe === "క్రీడలు" && (
+                    <option value="ఓలింపిక్స్">ఓలింపిక్స్</option>
                   )}
                 </select>
               </div>

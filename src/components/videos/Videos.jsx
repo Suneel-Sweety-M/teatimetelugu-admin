@@ -14,7 +14,7 @@ const Videos = () => {
   const [totalItems, setTotalItems] = useState(0);
 
   const [cache, setCache] = useState({}); // { "filters|limit": {1:[..], 2:[..]} }
-  const [currentVideos, setCurrentVideos] = useState([]); 
+  const [currentVideos, setCurrentVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [popupBox, setPopupBox] = useState(false);
@@ -105,7 +105,7 @@ const Videos = () => {
         toast.success(res?.message);
         setDeleteId("");
         setDeletePopup(false);
-        fetchVideos(currentPage, false);
+        fetchVideos(currentPage, true);
       } else {
         toast.error(res?.message);
       }
@@ -145,9 +145,10 @@ const Videos = () => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="">Select Category</option>
+                <option value="latest">Latest Videos</option>
                 <option value="trailers">Trailer</option>
-                <option value="video songs">Video Songs</option>
-                <option value="lyrical videos">Lyrical Songs</option>
+                <option value="video_songs">Video Songs</option>
+                <option value="lyrical_songs">Lyrical Songs</option>
                 <option value="events">Events</option>
                 <option value="shows">Shows</option>
                 <option value="ott">OTT</option>
@@ -264,7 +265,13 @@ const Videos = () => {
         )}
       </div>
 
-      {popupBox && <VideoAdd setPopupBox={setPopupBox} />}
+      {popupBox && (
+        <VideoAdd
+          setPopupBox={setPopupBox}
+          fetchVideos={() => fetchVideos(1, true)}
+        />
+      )}
+
       {deletePopup && (
         <Popup
           setDeletePopup={setDeletePopup}

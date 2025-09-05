@@ -21,6 +21,7 @@ const GalleryEdit = () => {
   const [mediaLinks, setMediaLinks] = useState([]); // already uploaded
   const [removedImages, setRemovedImages] = useState([]); // to delete from AWS/Cloudinary
 
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // ✅ File input handler
@@ -59,6 +60,7 @@ const GalleryEdit = () => {
   };
 
   const fetchGallery = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await getGalleryById(gid);
 
@@ -88,7 +90,8 @@ const GalleryEdit = () => {
       console.error(err);
       toast.error("Something went wrong while posting!");
     } finally {
-      setIsSaving(false);
+      // setIsSaving(false);
+      setIsLoading(false);
     }
   }, [gid, navigate, user?._id]);
 
@@ -166,154 +169,174 @@ const GalleryEdit = () => {
             </Link>
           </div>
 
-          <div className="write-news-section">
-            {/* ===== Name ===== */}
-            <div className="wns-box das-my20 das-py20">
-              <h3>Edit English Name</h3>
-              <input
-                type="text"
-                placeholder="eg. Elon Musk (EN)"
-                className="br5"
-                value={name.en}
-                onChange={(e) => setName({ ...name, en: e.target.value })}
-              />
-              <h3 className="das-mt10">Edit Telugu Name</h3>
-              <input
-                type="text"
-                placeholder="ఉదా: ఎలాన్ మస్క్ (TE)"
-                className="br5"
-                value={name.te}
-                onChange={(e) => setName({ ...name, te: e.target.value })}
-              />
-            </div>
-
-            {/* ===== Title ===== */}
-            <div className="wns-box das-my20 das-py20">
-              <h3>Edit English Title</h3>
-              <input
-                type="text"
-                placeholder="eg. Elon started... (EN)"
-                className="br5"
-                value={title.en}
-                onChange={(e) => setTitle({ ...title, en: e.target.value })}
-              />
-              <h3 className="das-mt10">Edit Telugu Title</h3>
-              <input
-                type="text"
-                placeholder="ఉదా: ఎలాన్ ప్రారంభించారు... (TE)"
-                className="br5"
-                value={title.te}
-                onChange={(e) => setTitle({ ...title, te: e.target.value })}
-              />
-            </div>
-
-            {/* ===== Description ===== */}
-            <div className="wns-box das-my20 das-py20">
-              <div className="das-d-flex das-jcsb">
-                <h3>Edit Description</h3>
-                <div
-                  className="upload-system-files br5 cp"
-                  onClick={() => setIsUpload(true)}
-                >
-                  <b>Upload</b>
-                  <i className="fa fa-cloud-arrow-up"></i>
-                </div>
+          {isLoading ? (
+            <div className="single-news-loading-container single-news-duo-left">
+              <div className="snlc-title">
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-half-text"></div>
               </div>
-              <h3>English</h3>
-              <JoditEditor
-                className="jodit-editor"
-                value={description.en}
-                onChange={(newContent) =>
-                  setDescription({ ...description, en: newContent })
-                }
-              />
-              <h3 className="das-mt10">Telugu</h3>
-              <JoditEditor
-                className="jodit-editor"
-                value={description.te}
-                onChange={(newContent) =>
-                  setDescription({ ...description, te: newContent })
-                }
-              />
+              <div className="snlc-img"></div>
+              <div className="snlc-desc">
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-text"></div>
+                <div className="snlc-half-text"></div>
+              </div>
             </div>
-
-            {/* ===== Images ===== */}
-            <div className="wns-box das-my20 das-py20">
-              <h3>Edit Images</h3>
-              <div className="das-gallery-grid">
-                {/* ✅ Already uploaded links */}
-                {mediaLinks?.map((file, index) => (
-                  <div key={index} className="das-gg-img">
-                    <i
-                      className="fa fa-xmark"
-                      onClick={() => removeMediaLink(index)}
-                    ></i>
-                    <img src={file} alt="uploaded" />
-                  </div>
-                ))}
-                {/* ✅ New uploads */}
-                {mediaFiles?.map((file, index) => renderPreview(file, index))}
+          ) : (
+            <div className="write-news-section">
+              {/* ===== Name ===== */}
+              <div className="wns-box das-my20 das-py20">
+                <h3>Edit English Name</h3>
                 <input
-                  type="file"
-                  multiple
-                  accept="image/*, gif/*"
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                  id="galleryPics"
+                  type="text"
+                  placeholder="eg. Elon Musk (EN)"
+                  className="br5"
+                  value={name.en}
+                  onChange={(e) => setName({ ...name, en: e.target.value })}
                 />
-                <label
-                  htmlFor="galleryPics"
-                  className="das-gg-img das-add-gg-img"
+                <h3 className="das-mt10">Edit Telugu Name</h3>
+                <input
+                  type="text"
+                  placeholder="ఉదా: ఎలాన్ మస్క్ (TE)"
+                  className="br5"
+                  value={name.te}
+                  onChange={(e) => setName({ ...name, te: e.target.value })}
+                />
+              </div>
+
+              {/* ===== Title ===== */}
+              <div className="wns-box das-my20 das-py20">
+                <h3>Edit English Title</h3>
+                <input
+                  type="text"
+                  placeholder="eg. Elon started... (EN)"
+                  className="br5"
+                  value={title.en}
+                  onChange={(e) => setTitle({ ...title, en: e.target.value })}
+                />
+                <h3 className="das-mt10">Edit Telugu Title</h3>
+                <input
+                  type="text"
+                  placeholder="ఉదా: ఎలాన్ ప్రారంభించారు... (TE)"
+                  className="br5"
+                  value={title.te}
+                  onChange={(e) => setTitle({ ...title, te: e.target.value })}
+                />
+              </div>
+
+              {/* ===== Description ===== */}
+              <div className="wns-box das-my20 das-py20">
+                <div className="das-d-flex das-jcsb">
+                  <h3>Edit Description</h3>
+                  <div
+                    className="upload-system-files br5 cp"
+                    onClick={() => setIsUpload(true)}
+                  >
+                    <b>Upload</b>
+                    <i className="fa fa-cloud-arrow-up"></i>
+                  </div>
+                </div>
+                <h3>English</h3>
+                <JoditEditor
+                  className="jodit-editor"
+                  value={description.en}
+                  onChange={(newContent) =>
+                    setDescription({ ...description, en: newContent })
+                  }
+                />
+                <h3 className="das-mt10">Telugu</h3>
+                <JoditEditor
+                  className="jodit-editor"
+                  value={description.te}
+                  onChange={(newContent) =>
+                    setDescription({ ...description, te: newContent })
+                  }
+                />
+              </div>
+
+              {/* ===== Images ===== */}
+              <div className="wns-box das-my20 das-py20">
+                <h3>Edit Images</h3>
+                <div className="das-gallery-grid">
+                  {/* ✅ Already uploaded links */}
+                  {mediaLinks?.map((file, index) => (
+                    <div key={index} className="das-gg-img">
+                      <i
+                        className="fa fa-xmark"
+                        onClick={() => removeMediaLink(index)}
+                      ></i>
+                      <img src={file} alt="uploaded" />
+                    </div>
+                  ))}
+                  {/* ✅ New uploads */}
+                  {mediaFiles?.map((file, index) => renderPreview(file, index))}
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*, gif/*"
+                    onChange={handleFileChange}
+                    style={{ display: "none" }}
+                    id="galleryPics"
+                  />
+                  <label
+                    htmlFor="galleryPics"
+                    className="das-gg-img das-add-gg-img"
+                  >
+                    <i className="fa fa-plus"></i>
+                    <span>Add image</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* ===== Categories ===== */}
+              <div className="wns-box das-my20 das-py20">
+                <h3>English Category</h3>
+                <select
+                  className="br5"
+                  value={category.en}
+                  onChange={(e) =>
+                    setCategory({ ...category, en: e.target.value })
+                  }
                 >
-                  <i className="fa fa-plus"></i>
-                  <span>Add image</span>
-                </label>
+                  <option value="">Select Here</option>
+                  <option value="hero">Hero</option>
+                  <option value="actress">Actress</option>
+                </select>
+
+                <h3 className="das-mt10">Telugu Category</h3>
+                <select
+                  className="br5"
+                  value={category.te}
+                  onChange={(e) =>
+                    setCategory({ ...category, te: e.target.value })
+                  }
+                >
+                  <option value="">ఎంచుకోండి</option>
+                  <option value="హీరో">హీరో</option>
+                  <option value="నటి">నటి</option>
+                </select>
+              </div>
+
+              {/* ===== Buttons ===== */}
+              <div className="other-details">
+                <div className="cancel-news-btn btn">Cancel</div>
+                {!isSaving ? (
+                  <div className="post-news-btn btn" onClick={handlePost}>
+                    Update
+                  </div>
+                ) : (
+                  <button type="submit" className="is-submitting-btn btn">
+                    Submitting...
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* ===== Categories ===== */}
-            <div className="wns-box das-my20 das-py20">
-              <h3>English Category</h3>
-              <select
-                className="br5"
-                value={category.en}
-                onChange={(e) =>
-                  setCategory({ ...category, en: e.target.value })
-                }
-              >
-                <option value="">Select Here</option>
-                <option value="hero">Hero</option>
-                <option value="actress">Actress</option>
-              </select>
-
-              <h3 className="das-mt10">Telugu Category</h3>
-              <select
-                className="br5"
-                value={category.te}
-                onChange={(e) =>
-                  setCategory({ ...category, te: e.target.value })
-                }
-              >
-                <option value="">ఎంచుకోండి</option>
-                <option value="హీరో">హీరో</option>
-                <option value="నటి">నటి</option>
-              </select>
-            </div>
-
-            {/* ===== Buttons ===== */}
-            <div className="other-details">
-              <div className="cancel-news-btn btn">Cancel</div>
-              {!isSaving ? (
-                <div className="post-news-btn btn" onClick={handlePost}>
-                  Update
-                </div>
-              ) : (
-                <button type="submit" className="is-submitting-btn btn">
-                  Submitting...
-                </button>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

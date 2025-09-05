@@ -130,7 +130,7 @@ export const getFilteredNews = async (
 
 export const updateNewsPost = async (id, data) => {
   try {
-    const res = await apiRequest({
+    const res = await apiRequest({ 
       url: `/news/edit/${id}`,
       data,
       method: "PUT",

@@ -130,7 +130,7 @@ const Galleries = () => {
         toast.success(res?.message);
         setDeleteId("");
         setDeletePopup(false);
-        fetchGallery();
+        fetchGallery(currentPage, true); // refetch current page
       } else {
         toast.error(res?.message);
       }
